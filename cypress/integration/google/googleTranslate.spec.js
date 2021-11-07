@@ -3,15 +3,16 @@ import GoogleTranslatePage from '../../support/pageObjects/GoogleTranslatePageOb
 var locData;
 const googlePage = new GoogleTranslatePage();
 
-describe('Visit Google translate and perform German <-> Spanish translation', () => {
+describe('Visit Google to perfrom translation between 2 languages', () => {
   
   beforeEach('Land to google translate page', () => {
-      cy.fixture('googelTranslateElements').then(locatorsAndData => {
+      cy.fixture('data').then(locatorsAndData => {
         locData = locatorsAndData;
       })  
   })
 
-  it('Translate from German to Spanish', () => {
+  it(`Translate from source language to target language`, () => {
+    cy.log(`Translating from ${locData.sourceLang} language to ${locData.translationLang} language`);
     cy.visit('https://translate.google.com/')
     googlePage.getSourceLangSelectCaretIcon().first().click().type(`${locData.sourceLang}{enter}`)
     googlePage.getTransLangSelectCaretIcon().type(`${locData.translationLang}{enter}`)
@@ -19,7 +20,8 @@ describe('Visit Google translate and perform German <-> Spanish translation', ()
     googlePage.getTransLangPlaceholderText().should('contain', /locData.spanishText/ig)
   })
 
-  it('Translate from Spanish to German', () => {
+  it('Translate from target language to source language', () => {
+    cy.log(`Translating from ${locData.translationLang} language to ${locData.sourceLang} language`);
     googlePage.getLangSwitchButton().first().click()
     googlePage.getSourceLangPlaceholderText().first().clear().type(locData.spanishText).should('have.value', locData.spanishText)
     googlePage.getTransLangPlaceholderText().should('contain', /locData.germanText/ig)
