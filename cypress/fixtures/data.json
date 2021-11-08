@@ -1,7 +1,8 @@
 {
     "sourceLang" : "German",
-    "translationLang" : "Spanish",
-    "germanText": "Demokratien",
-    "spanishText": "Democracias"
+    "targetLang" : "Spanish",
+    
+    "sourceLangText": "Demokratien",
+    "targetLangText": "Democracias"
 }
   

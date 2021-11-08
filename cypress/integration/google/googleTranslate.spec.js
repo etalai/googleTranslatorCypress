@@ -1,33 +1,28 @@
 import GoogleTranslatePage from '../../support/pageObjects/GoogleTranslatePageObject';
-
-var locData;
+var data = require('../../fixtures/data.json');
 const googlePage = new GoogleTranslatePage();
 
 describe('Visit Google to perfrom translation between 2 languages', () => {
-  
-  beforeEach('Land to google translate page', () => {
-      cy.fixture('data').then(locatorsAndData => {
-        locData = locatorsAndData;
-      })  
-  })
 
-  it(`Translate from source language to target language`, () => {
-    cy.log(`Translating from ${locData.sourceLang} language to ${locData.translationLang} language`);
+  it(`Translate from ${data.sourceLang} language to ${data.targetLang} language`, () => {
     cy.visit('https://translate.google.com/')
-    googlePage.getSourceLangSelectCaretIcon().first().click().type(`${locData.sourceLang}{enter}`)
-    googlePage.getTransLangSelectCaretIcon().type(`${locData.translationLang}{enter}`)
-    googlePage.getSourceLangPlaceholderText().type(locData.germanText).should('have.value', locData.germanText)
-    googlePage.getTransLangPlaceholderText().should('contain', /locData.spanishText/ig)
+    googlePage.getSourceLangSelectCaretIcon().first().click().type(`${data.sourceLang}{enter}`)
+    googlePage.getTransLangSelectCaretIcon().type(`${data.targetLang}{enter}`)
+    googlePage.getSourceLangPlaceholderText().type(data.sourceLangText).should('have.value', data.sourceLangText)
+    googlePage.getTransLangPlaceholderText().invoke('text').then(actualText => {
+      expect(data.targetLangText.toUpperCase()).to.equal(actualText.toUpperCase())
+    })
   })
 
-  it('Translate from target language to source language', () => {
-    cy.log(`Translating from ${locData.translationLang} language to ${locData.sourceLang} language`);
+  it(`Translate from ${data.targetLang} language to ${data.sourceLang} language`, () => {
     googlePage.getLangSwitchButton().first().click()
-    googlePage.getSourceLangPlaceholderText().first().clear().type(locData.spanishText).should('have.value', locData.spanishText)
-    googlePage.getTransLangPlaceholderText().should('contain', /locData.germanText/ig)
+    googlePage.getSourceLangPlaceholderText().first().clear().type(data.targetLangText).should('have.value', data.targetLangText)
+    googlePage.getTransLangPlaceholderText().invoke('text').then(actualText => {
+      expect(data.sourceLangText.toUpperCase()).to.equal(actualText.toUpperCase())
+    })
   })
 
-  it('Enter text into screen keyboard', () => {
+  it('Enter text "Hi!" into screen keyboard', () => {
     googlePage.getSourceLangPlaceholderText().first().clear()
     googlePage.enterHiInKeyboard();
     googlePage.getSourceLangPlaceholderText().first().type('{shift}!')
